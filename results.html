@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Evaluation Results</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap" rel="stylesheet">
+
+<style>
+* { box-sizing:border-box; font-family:"Segoe UI", Arial, sans-serif; }
+
+body {
+    min-height:100vh;
+    background-color:#fbfbf8;
+    background-image:
+        repeating-linear-gradient(to bottom, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 24px),
+        radial-gradient(circle at 20% 20%, rgba(160,180,210,0.18) 0%, transparent 45%),
+        radial-gradient(circle at 75% 75%, rgba(160,180,210,0.15) 0%, transparent 45%);
+    padding:40px;
+}
+
+.panel {
+    max-width:1200px;
+    margin:auto;
+    background:white;
+    border-radius:22px;
+    padding:40px;
+}
+
+.main-btn {
+    background:#102f52;
+    color:white;
+    border-radius:25px;
+    padding:10px 18px;
+    border:none;
+    font-weight:600;
+}
+
+.main-btn:hover { background:#2f5c8c; }
+
+table {
+    border-radius:12px;
+    overflow:hidden;
+}
+
+.answer-box{
+    max-height:120px;
+    overflow:auto;
+    font-size:14px;
+}
+
+.score-box{
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.arrow-btn{
+    border:none;
+    background:#3373bc;
+    color:white;
+    width:26px;
+    height:26px;
+    border-radius:50%;
+    font-weight:bold;
+}
+
+.arrow-btn:hover{
+    background:#2f5c8c;
+}
+
+.doodle {
+    position:absolute;
+    font-family:'Patrick Hand', cursive;
+    color:rgba(59,110,168,0.22);
+    font-size:42px;
+}
+
+.d1 { top:10%; left:10%; }
+.d2 { bottom:20%; right:15%; }
+
+</style>
+</head>
+
+<body>
+
+<div class="doodle d1">results ✎</div>
+<div class="doodle d2">score ✦</div>
+
+<div class="panel shadow-lg">
+
+<h3 class="text-center mb-4" style="color:#3373bc;">Evaluation Results</h3>
+
+<div class="table-responsive">
+
+<table class="table table-bordered align-middle">
+
+<thead class="table-light">
+<tr>
+<th>Roll No</th>
+<th>Question</th>
+<th>OCR Extracted Answer</th>
+<th>Model Answer</th>
+<th>Similarity</th>
+<th>Score</th>
+</tr>
+</thead>
+
+<tbody>
+
+{% for r in rows %}
+
+<tr>
+
+<td>{{ r.student }}</td>
+
+<td style="width:180px">{{ r.question }}</td>
+
+<td class="answer-box">
+{{ r.ocr_answer | safe }}
+</td>
+
+<td class="answer-box">
+{{ r.model_answer }}
+</td>
+
+<td>{{ r.similarity }}</td>
+
+<td>
+
+<div class="score-box">
+
+<strong>{{ r.score }} / {{ r.max }}</strong>
+
+<form method="POST" action="/adjust_score">
+<input type="hidden" name="index" value="{{ loop.index0 }}">
+<input type="hidden" name="change" value="1">
+<button class="arrow-btn">↑</button>
+</form>
+
+<form method="POST" action="/adjust_score">
+<input type="hidden" name="index" value="{{ loop.index0 }}">
+<input type="hidden" name="change" value="-1">
+<button class="arrow-btn">↓</button>
+</form>
+
+</div>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</tbody>
+</table>
+
+</div>
+
+<div class="mt-4 text-center">
+
+<a href="/download_csv" class="btn main-btn">Download CSV</a>
+
+<a href="/download_pdf" class="btn main-btn ms-2">Download PDF</a>
+
+<a href="/upload_answers" class="btn btn-outline-secondary ms-2">Evaluate Another Student</a>
+
+<a href="/logout" class="btn btn-outline-secondary ms-2">Logout</a>
+
+</div>
+
+</div>
+
+</body>
+</html>
